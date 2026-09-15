@@ -1,0 +1,12 @@
+node_modules
+dist
+.DS_Store
+*.local
+.env
+.env.*
+!.env.example
+
+# Admin paneldan yuklangan rasm/videolar va saqlangan ma'lumotlar
+uploads
+data/*.json
+data/*.bak

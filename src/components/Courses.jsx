@@ -1,0 +1,56 @@
+import React, { useMemo, useState } from "react";
+import { useContent } from "../context/ContentContext.jsx";
+import CourseCard from "./CourseCard.jsx";
+import Reveal from "./Reveal.jsx";
+
+export default function Courses({ onOpenCourse }) {
+  const { content } = useContent();
+  const data = content.courses || {};
+  const items = data.items || [];
+  const filters = data.filters || [];
+  const [filter, setFilter] = useState("barcha");
+
+  const filtered = useMemo(
+    () => (filter === "barcha" ? items : items.filter((c) => c.category === filter)),
+    [items, filter]
+  );
+
+  if (items.length === 0) return null;
+
+  return (
+    <section id="kurslar" className="bg-slate-50 py-20 sm:py-28">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8">
+        <Reveal>
+          <h2 className="text-3xl sm:text-4xl font-semibold text-indigo-950 tracking-tight">{data.title}</h2>
+          {data.subtitle && <p className="text-slate-500 mt-3 max-w-lg leading-relaxed">{data.subtitle}</p>}
+        </Reveal>
+
+        {filters.length > 1 && (
+          <Reveal delay={80} className="mt-6 flex flex-row flex-nowrap gap-2 overflow-x-auto no-scrollbar pb-1 -mx-5 px-5 sm:mx-0 sm:px-0 sm:flex-wrap">
+            {filters.map((f) => (
+              <button
+                key={f.id}
+                onClick={() => setFilter(f.id)}
+                className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                  filter === f.id
+                    ? "bg-indigo-950 text-white shadow-md shadow-indigo-950/20"
+                    : "bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:text-indigo-700"
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </Reveal>
+        )}
+
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filtered.map((c, i) => (
+            <Reveal key={c.id || i} delay={(i % 3) * 90}>
+              <CourseCard course={c} onOpen={onOpenCourse} />
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
